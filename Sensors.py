@@ -86,7 +86,7 @@ def timed_thread():
 	if is_on:
 		temp = str(round(((chan1.voltage - 0.500)/0.010), 2))
 		current_time = math.trunc((datetime.now() - start_time).total_seconds())
-		print(start_time.strftime("%d/%m/%Y %H:%M:%S") + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
+		print(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
 		#save_sample(start_time, current_time, round(((chan1.voltage - 0.500)/0.010), 2), "*")
 	else:
 		print("logging disabled")
