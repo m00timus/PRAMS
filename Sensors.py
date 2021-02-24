@@ -22,7 +22,7 @@ blynk = BlynkLib.Blynk(BLYNK_AUTH)
 GPIO.setmode(GPIO.BCM) # default setup is BCM
 
 #define pins used and other admin
-btn_power = 26 #deprecated
+btn_power = 26 # deprecated
 sample_rate = 5  # default is 5
 pin = 6
 value = 1
@@ -78,6 +78,7 @@ def timed_thread():
 	global is_on
 	global sample_rate
 	global start_time
+	global now
 	global current_time
 	global temp
 	thread = threading.Timer(sample_rate, timed_thread)
@@ -85,7 +86,7 @@ def timed_thread():
 	thread.start()
 	if is_on:
 		temp = str(round(((chan1.voltage - 0.500)/0.010), 2))
-		current_time = math.trunc((datetime.now() - start_time).total_seconds())
+		current_time = math.trunc((datetime.now() - now).total_seconds())
 		print(str(start_time) + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
 		#save_sample(start_time, current_time, round(((chan1.voltage - 0.500)/0.010), 2), "*")
 	else:
@@ -141,40 +142,6 @@ def V10_read_handler():
 		blynk.virtual_write(10, 0)
 	else:
 		blynk.virtual_write(10, 1)
-	
-
-# Register Virtual Pins
-@blynk.VIRTUAL_WRITE(1)
-def my_write_handler(value):
-	global is_on
-	global thread
-	if is_on:
-		thread.join()
-		os.system('clear')
-		print("logging stopped")
-		#		thread needs to be stopped on callback event, loggging is NOT stopped.yet
-		is_on = False
-		pass
-	else:
-		os.system('clear')
-		startup()
-#		timed_thread()
-		is_on = True
-
-
-# Register Virtual Pins
-@blynk.VIRTUAL_WRITE(2)
-def my_write_handler(value2):
-	global sample_rate
-	if sample_rate == 10:
-		sample_rate = 5
-	elif sample_rate == 5:
-		sample_rate = 1
-	else:
-		sample_rate = 10
-	pass
-
-
 
 def setup():
 	timed_thread() # call it once to start thread
