@@ -33,8 +33,7 @@ thread = None
 temp = ''
 
 # get the starting time of the program
-now = datetime.now()
-start_time = now.strftime("%d/%m/%Y %H:%M:%S")
+start_time = datetime.now()
 current_time = 0
 eeprom = ES2EEPROMUtils.ES2EEPROM()
 
@@ -86,8 +85,8 @@ def timed_thread():
 	thread.start()
 	if is_on:
 		temp = str(round(((chan1.voltage - 0.500)/0.010), 2))
-		current_time = math.trunc((datetime.now() - now).total_seconds())
-		print(str(start_time) + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
+		current_time = math.trunc((datetime.now() - start_time).total_seconds())
+		print(start_time.strftime("%d/%m/%Y %H:%M:%S") + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
 		#save_sample(start_time, current_time, round(((chan1.voltage - 0.500)/0.010), 2), "*")
 	else:
 		print("logging disabled")
