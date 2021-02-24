@@ -4,7 +4,7 @@
 
 # imports for code, might need to be omptimised
 import threading 
-import datetime 
+from datetime import datetime 
 import busio 
 import board 
 import digitalio 
@@ -22,7 +22,7 @@ blynk = BlynkLib.Blynk(BLYNK_AUTH)
 GPIO.setmode(GPIO.BCM) # default setup is BCM
 
 #define pins used and other admin
-btn_power = 26 #depracted
+btn_power = 26 #deprecated
 sample_rate = 5  # default is 5
 pin = 6
 value = 1
@@ -33,26 +33,16 @@ thread = None
 temp = ''
 
 # get the starting time of the program
-start_time = datetime.datetime.now()
-start_time = datetime.datetime(start_time.year, start_time.month, start_time.day, start_time.hour, start_time.minute)
+now = datetime.now()
+start_time = now.strftime("%d/%m/%Y %H:%M:%S")
 current_time = 0
 eeprom = ES2EEPROMUtils.ES2EEPROM()
 
-# create the spi bus
-spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-
-# create the cs (chip select)
-cs = digitalio.DigitalInOut(board.D5)
-
-# create the mcp object
-mcp = MCP.MCP3008(spi, cs)
-
-# create an analog input channel on pin 0 (LDR)
-chan = AnalogIn(mcp, MCP.P0)
-
-# creat an analog input channel on pin 1 (temp sensor)
-chan1 = AnalogIn(mcp, MCP.P1)
-
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI) # create the spi bus
+cs = digitalio.DigitalInOut(board.D5) # create the cs (chip select)
+mcp = MCP.MCP3008(spi, cs) # create the mcp object
+chan = AnalogIn(mcp, MCP.P0) # create an analog input channel on pin 0 (LDR)
+chan1 = AnalogIn(mcp, MCP.P1) # creat an analog input channel on pin 1 (temp sensor)
 
 def save_sample(time_start, time_current, temp, buz): # WIP - saves data inn storeable form for EEPROM
     amount_samples = eeprom.read_byte(0)
@@ -95,7 +85,7 @@ def timed_thread():
 	thread.start()
 	if is_on:
 		temp = str(round(((chan1.voltage - 0.500)/0.010), 2))
-		current_time = math.trunc((datetime.datetime.now() - start_time).total_seconds())
+		current_time = math.trunc((datetime.now() - start_time).total_seconds())
 		print(str(start_time) + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + "*")
 		#save_sample(start_time, current_time, round(((chan1.voltage - 0.500)/0.010), 2), "*")
 	else:
@@ -138,19 +128,13 @@ def V7_read_handler():
 	blynk.virtual_write(7, temp)
 
 
-@blynk.VIRTUAL_READ(8)
-def V8_read_handler():
-	global sample_rate
-	blynk.virtual_write(8, sample_rate)
-
-
 @blynk.VIRTUAL_READ(9)
 def V9_read_handler():
 	global current_time
 	blynk.virtual_write(9, current_time)
 
 
-@blynk.VIRTUAL_READ(10)
+@blynk.VIRTUAL_READ(10) #DEPRECATED
 def V10_read_handler():
 	global is_on
 	if is_on:
