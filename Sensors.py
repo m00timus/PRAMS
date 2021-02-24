@@ -133,7 +133,7 @@ def V7_read_handler():
 
 @blynk.VIRTUAL_READ(8)
 def V8_read_handler():
-	scaled_LDR = chan.value * 64000 / 100
+	scaled_LDR = chan.value / 64000 * 100
 	blynk.virtual_write(8, scaled_LDR)
 
 @blynk.VIRTUAL_READ(9)
