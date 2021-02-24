@@ -31,6 +31,7 @@ btn = 19
 is_on = True
 thread = None
 temp = ''
+LDR = ''
 
 # get the starting time of the program
 start_time = datetime.now()
@@ -80,13 +81,15 @@ def timed_thread():
 	global now
 	global current_time
 	global temp
+	global LDR
 	thread = threading.Timer(sample_rate, timed_thread)
 	thread.daemon = True
 	thread.start()
 	if is_on:
 		temp = str(round(((chan1.voltage - 0.500)/0.010), 2))
+		LDR = str(chan.value)
 		current_time = math.trunc((datetime.now() - start_time).total_seconds())
-		print(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + str(chan.value))
+		print(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "s\t" + str(current_time) + "s\t\t" + temp + 'C' + "\t\t" + LDR)
 		#save_sample(start_time, current_time, round(((chan1.voltage - 0.500)/0.010), 2), "*")
 	else:
 		print("logging disabled")
@@ -127,6 +130,12 @@ def V7_read_handler():
 	global temp
 	blynk.virtual_write(7, temp)
 
+
+@blynk.VIRTUAL_READ(8)
+def V8_read_handler():
+	global LDR
+	scaled_LDR = LDR * 64000 / 100
+	blynk.virtual_write(8, scaled_LDR)
 
 @blynk.VIRTUAL_READ(9)
 def V9_read_handler():
