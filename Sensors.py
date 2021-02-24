@@ -152,7 +152,7 @@ def setup():
 
 
 def startup():
-	print("Time" + "\t\t\t" + "Sys Timer" + "\t" + "Temp") # setting up display on program start, will need to set listener in setup after this
+	print("Time" + "\t\t\t" + "Sys Timer" + "\t" + "Temp" + "\t" + "LDR Reading") # setting up display on program start, will need to set listener in setup after this
 
 
 if __name__ == "__main__":
