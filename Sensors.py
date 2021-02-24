@@ -2,6 +2,7 @@
 # data backups for my indoor garden
 # hoping to expand functionality soon
 
+# imports for code, might need to be omptimised
 import threading 
 import datetime 
 import busio 
@@ -30,8 +31,10 @@ btn = 19
 is_on = True
 thread = None
 temp = ''
+
 # get the starting time of the program
 start_time = datetime.datetime.now()
+start_time = datetime.datetime(start_time.year, start_time.month, start_time.day, start_time.hour, start_time.minute)
 current_time = 0
 eeprom = ES2EEPROMUtils.ES2EEPROM()
 
@@ -51,7 +54,7 @@ chan = AnalogIn(mcp, MCP.P0)
 chan1 = AnalogIn(mcp, MCP.P1)
 
 
-def save_sample(time_start, time_current, temp, buz):
+def save_sample(time_start, time_current, temp, buz): # WIP - saves data inn storeable form for EEPROM
     amount_samples = eeprom.read_byte(0)
     samples = []
     samples = eeprom.read_block(1,amount_samples*4)
@@ -73,7 +76,7 @@ def save_sample(time_start, time_current, temp, buz):
         write_samples(amount_samples, samples_new)
         pass
 
-def write_samples(amount_samples,samples):
+def write_samples(amount_samples,samples): # WIP - write to EEPROM
     eeprom.write_byte(0,amount_samples)
     eeprom.write_block(1,samples)
 
@@ -101,7 +104,7 @@ def timed_thread():
 pass
 
 
-def callback(self): # simple function to change sample rate between 3 states
+def callback(self): # simple function to change sample rate between 3 states - DEPRECATED
 	global sample_rate
 	if sample_rate == 10:
 		sample_rate = 5
@@ -112,7 +115,7 @@ def callback(self): # simple function to change sample rate between 3 states
 	pass
 
 
-def callback_power(self):
+def callback_power(self): # DEPRECATED - enables/disables the polling of the system data
 	global is_on
 	global thread
 	if is_on:
@@ -199,7 +202,7 @@ def setup():
 
 
 def startup():
-	print("Time" + "\t\t\t" + "Sys Timer" + "\t" + "Temp" + "\t" + "Buzzer") # setting up display on program start, will need to set listener in setup after this
+	print("Time" + "\t\t\t" + "Sys Timer" + "\t" + "Temp") # setting up display on program start, will need to set listener in setup after this
 
 
 if __name__ == "__main__":
@@ -207,4 +210,4 @@ if __name__ == "__main__":
 	setup() #  call setup function to start up program
 	# tell program to run indefinitely
 	while True:
-		blynk.run()
+		blynk.run() # run blynklib and connect to devices
